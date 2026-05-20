@@ -1,31 +1,31 @@
 # Zombie Shooter
 
-Juego de acción simple creado con Python y Pygame.
+A simple action game created with Python and Pygame.
 
-## Cómo ejecutar
+## How to run
 
-1. Abre un terminal en `c:\Users\S\Documents\game`
-2. Instala Pygame:
+1. Open a terminal in `c:\Users\S\Documents\game`
+2. Install Pygame:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-3. Ejecuta el juego:
+3. Run the game:
 
 ```bash
 python main.py
 ```
 
-## Controles
+## Controls
 
-- Flecha izquierda / A: mover a la izquierda
-- Flecha derecha / D: mover a la derecha
-- Barra espaciadora: disparar
-- R: reiniciar cuando pierdas
-- Esc: salir
+- Left arrow / A: move left
+- Right arrow / D: move right
+- Spacebar: shoot
+- R: restart after losing
+- Esc: quit
 
-## Notas
+## Notes
 
-- El juego usa formas simples para los zombies y el jugador.
-- Si quieres, puedo agregar sonido, animación adicional o niveles.
+- The game uses simple shapes for zombies and the player.
+- If you want, I can add sound, extra animation, or levels.
