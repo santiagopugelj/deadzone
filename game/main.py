@@ -93,13 +93,13 @@ def draw_background(surface):
 
 
 def draw_ui(surface, score, lives):
-    score_text = FONT_MEDIUM.render(f"Score: {score}", True, WHITE)
-    lives_text = FONT_MEDIUM.render(f"Lives: {lives}", True, WHITE)
+    score_text = FONT_MEDIUM.render(f"Puntos: {score}", True, WHITE)
+    lives_text = FONT_MEDIUM.render(f"Vidas: {lives}", True, WHITE)
     surface.blit(score_text, (20, 20))
     surface.blit(lives_text, (WIDTH - lives_text.get_width() - 20, 20))
     pygame.draw.rect(surface, GREEN, (20, 60, 220, 22), border_radius=12)
     pygame.draw.rect(surface, RED, (250, 60, 220, 22), border_radius=12)
-    intro = FONT_SMALL.render("Left/right arrows to move, space to shoot", True, LIGHT_GRAY)
+    intro = FONT_SMALL.render("Flechas izquierda/derecha para moverte, espacio para disparar", True, LIGHT_GRAY)
     surface.blit(intro, (WIDTH // 2 - intro.get_width() // 2, 22))
 
 
@@ -107,9 +107,9 @@ def draw_game_over(surface, score):
     overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 180))
     surface.blit(overlay, (0, 0))
-    game_over_text = FONT_LARGE.render("Game Over", True, RED)
-    score_text = FONT_MEDIUM.render(f"Final Score: {score}", True, WHITE)
-    restart_text = FONT_SMALL.render("Press R to restart or Esc to quit", True, LIGHT_GRAY)
+    game_over_text = FONT_LARGE.render("Juego terminado", True, RED)
+    score_text = FONT_MEDIUM.render(f"Puntuación final: {score}", True, WHITE)
+    restart_text = FONT_SMALL.render("Presiona R para reiniciar o Esc para salir", True, LIGHT_GRAY)
     surface.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2 - 80))
     surface.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 - 20))
     surface.blit(restart_text, (WIDTH // 2 - restart_text.get_width() // 2, HEIGHT // 2 + 28))
