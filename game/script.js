@@ -94,8 +94,8 @@ function drawZombies() {
 function drawUI() {
   ctx.fillStyle = COLORS.white;
   ctx.font = "32px Arial";
-  ctx.fillText(`Puntos: ${gameState.score}`, 20, 50);
-  ctx.fillText(`Vidas: ${gameState.lives}`, width - 200, 50);
+  ctx.fillText(`Score: ${gameState.score}`, 20, 50);
+  ctx.fillText(`Lives: ${gameState.lives}`, width - 200, 50);
 }
 
 function drawGameOver() {
@@ -105,15 +105,15 @@ function drawGameOver() {
   ctx.fillStyle = COLORS.red;
   ctx.font = "bold 48px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("Juego terminado", width / 2, height / 2 - 60);
+  ctx.fillText("Game over", width / 2, height / 2 - 60);
   
   ctx.fillStyle = COLORS.white;
   ctx.font = "32px Arial";
-  ctx.fillText(`Puntuación final: ${gameState.score}`, width / 2, height / 2 + 20);
+  ctx.fillText(`Final score: ${gameState.score}`, width / 2, height / 2 + 20);
   
   ctx.fillStyle = COLORS.lightGray;
   ctx.font = "24px Arial";
-  ctx.fillText("Presiona R para reiniciar o Esc para salir", width / 2, height / 2 + 80);
+  ctx.fillText("Press R to restart or Esc to quit", width / 2, height / 2 + 80);
   
   ctx.textAlign = "left";
 }
@@ -219,8 +219,8 @@ function draw() {
     drawGameOver();
   }
   
-  scoreEl.textContent = `Puntuación: ${gameState.score}`;
-  livesEl.textContent = `Vidas: ${Math.max(0, gameState.lives)}`;
+  scoreEl.textContent = `Score: ${gameState.score}`;
+  livesEl.textContent = `Lives: ${Math.max(0, gameState.lives)}`;
 }
 
 function loop() {
