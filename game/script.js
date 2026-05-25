@@ -19,6 +19,76 @@ const COLORS = {
   darkLine: "#1e1e24"
 };
 
+let audioContext = null;
+
+function ensureAudioContext() {
+  if (typeof window === "undefined" || !("AudioContext" in window)) {
+    return null;
+  }
+
+  if (!audioContext) {
+    audioContext = new AudioContext();
+  }
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume().catch(() => {});
+  }
+
+  return audioContext;
+}
+
+function playTone({ frequency, duration, type = "sine", volume = 0.05, attack = 0.005, filterFreq = 0 }) {
+  const ctx = ensureAudioContext();
+  if (!ctx) return;
+
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+
+  if (filterFreq > 0) {
+    filter.type = "lowpass";
+    filter.frequency.value = filterFreq;
+    oscillator.connect(filter);
+    filter.connect(gainNode);
+  } else {
+    oscillator.connect(gainNode);
+  }
+
+  gainNode.gain.setValueAtTime(0.0001, ctx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(Math.max(volume, 0.0001), ctx.currentTime + attack);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+  gainNode.connect(ctx.destination);
+
+  oscillator.start();
+  oscillator.stop(ctx.currentTime + duration + 0.03);
+}
+
+function playStartSound() {
+  playTone({ frequency: 660, duration: 0.12, type: "triangle", volume: 0.06 });
+}
+
+function playShootSound() {
+  playTone({ frequency: 880, duration: 0.07, type: "square", volume: 0.04 });
+}
+
+function playHitSound() {
+  playTone({ frequency: 320, duration: 0.08, type: "triangle", volume: 0.05 });
+}
+
+function playLifeLossSound() {
+  playTone({ frequency: 180, duration: 0.14, type: "sine", volume: 0.06, filterFreq: 300 });
+}
+
+function playGameOverSound() {
+  playTone({ frequency: 220, duration: 0.3, type: "sawtooth", volume: 0.05, filterFreq: 600 });
+  setTimeout(() => {
+    playTone({ frequency: 140, duration: 0.4, type: "sawtooth", volume: 0.05, filterFreq: 500 });
+  }, 120);
+}
+
 let gameState = {
   player: {
     x: width / 2 - 24,
@@ -38,6 +108,8 @@ let gameState = {
 };
 
 function startGame() {
+  ensureAudioContext();
+  playStartSound();
   gameState.started = true;
   gameState.keys = {};
   startMenu.classList.add("hidden");
@@ -146,15 +218,16 @@ function updateBullets() {
 
 function updateZombies() {
   gameState.zombies.forEach(z => z.y += z.speed);
-  
+
   gameState.zombies = gameState.zombies.filter(zombie => {
     if (zombie.y > height) {
       gameState.lives--;
+      playLifeLossSound();
       return false;
     }
     return true;
   });
-  
+
   gameState.bullets.forEach((bullet, bIdx) => {
     gameState.zombies.forEach((zombie, zIdx) => {
       if (
@@ -166,10 +239,11 @@ function updateZombies() {
         gameState.bullets.splice(bIdx, 1);
         gameState.zombies.splice(zIdx, 1);
         gameState.score += 10;
+        playHitSound();
       }
     });
   });
-  
+
   const p = gameState.player;
   gameState.zombies = gameState.zombies.filter(zombie => {
     if (
@@ -179,6 +253,7 @@ function updateZombies() {
       p.y + p.height > zombie.y
     ) {
       gameState.lives--;
+      playLifeLossSound();
       return false;
     }
     return true;
@@ -206,14 +281,15 @@ function updateSpawning() {
 
 function update() {
   if (!gameState.started || gameState.gameOver) return;
-  
+
   updatePlayer();
   updateBullets();
   updateZombies();
   updateSpawning();
-  
+
   if (gameState.lives <= 0) {
     gameState.gameOver = true;
+    playGameOverSound();
   }
 }
 
@@ -262,8 +338,9 @@ function resetGame() {
 startButton.addEventListener("click", startGame);
 
 window.addEventListener("keydown", event => {
+  ensureAudioContext();
   gameState.keys[event.key] = true;
-  
+
   if (event.key === " " || event.key === "Spacebar") {
     event.preventDefault();
     if (gameState.started && !gameState.gameOver) {
@@ -275,15 +352,16 @@ window.addEventListener("keydown", event => {
         height: 18,
         speed: 9,
       });
+      playShootSound();
     }
   }
-  
+
   if (event.key === "r" || event.key === "R") {
     if (gameState.gameOver) {
       resetGame();
     }
   }
-  
+
   if (event.key === "Escape") {
     if (gameState.gameOver) {
       location.reload();

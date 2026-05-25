@@ -1,8 +1,17 @@
-import pygame
+import math
 import random
 import sys
+from array import array
+
+import pygame
 
 pygame.init()
+
+try:
+    pygame.mixer.init()
+    SOUND_ENABLED = True
+except pygame.error:
+    SOUND_ENABLED = False
 
 WIDTH, HEIGHT = 800, 600
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -22,6 +31,67 @@ YELLOW = (255, 220, 90)
 ZOMBIE_GREEN = (112, 194, 60)
 
 clock = pygame.time.Clock()
+
+
+def make_tone(frequency, duration, volume=0.08, wave="sine", sample_rate=44100, attack=0.0, decay=0.0):
+    if not SOUND_ENABLED:
+        return None
+
+    frames = int(sample_rate * duration)
+    samples = array("h")
+
+    for index in range(frames):
+        t = index / sample_rate
+        envelope = 1.0
+
+        if attack and t < attack:
+            envelope = t / attack
+        elif decay and t > duration - decay:
+            envelope = (duration - t) / decay
+
+        if wave == "square":
+            raw = 1.0 if math.sin(2 * math.pi * frequency * t) >= 0 else -1.0
+        elif wave == "saw":
+            raw = 2 * (frequency * t - math.floor(frequency * t + 0.5))
+        else:
+            raw = math.sin(2 * math.pi * frequency * t)
+
+        sample = int(max(-1.0, min(1.0, raw * envelope)) * 32767 * volume)
+        samples.append(sample)
+
+    return pygame.mixer.Sound(buffer=samples.tobytes())
+
+
+def play_effect(frequency, duration, volume=0.08, wave="sine", attack=0.0, decay=0.0):
+    if not SOUND_ENABLED:
+        return
+
+    sound = make_tone(frequency, duration, volume=volume, wave=wave, attack=attack, decay=decay)
+    if sound is not None:
+        sound.play()
+
+
+def play_start_sound():
+    play_effect(660, 0.12, volume=0.1, wave="sine", attack=0.01)
+
+
+def play_shoot_sound():
+    play_effect(880, 0.07, volume=0.08, wave="square")
+
+
+def play_hit_sound():
+    play_effect(320, 0.08, volume=0.08, wave="sine")
+
+
+def play_life_loss_sound():
+    play_effect(180, 0.14, volume=0.09, wave="sine", attack=0.01, decay=0.02)
+
+
+def play_game_over_sound():
+    play_effect(220, 0.3, volume=0.08, wave="saw", decay=0.05)
+    pygame.time.delay(120)
+    play_effect(140, 0.4, volume=0.08, wave="saw", decay=0.05)
+
 
 class Player:
     def __init__(self):
@@ -173,12 +243,15 @@ def main():
                     continue
                 if game_started and event.key == pygame.K_SPACE and not game_over:
                     bullets.append(Bullet(player.x + player.width // 2 - 4, player.y - 18))
+                    play_shoot_sound()
                 if not game_started and event.key in (pygame.K_RETURN, pygame.K_SPACE):
                     game_started = True
+                    play_start_sound()
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not game_started:
                 if get_start_button_rect().collidepoint(event.pos):
                     game_started = True
+                    play_start_sound()
 
         keys = pygame.key.get_pressed()
         if game_started and not game_over:
@@ -199,8 +272,10 @@ def main():
                 if zombie.off_screen():
                     zombies.remove(zombie)
                     lives -= 1
+                    play_life_loss_sound()
                     if lives <= 0:
                         game_over = True
+                        play_game_over_sound()
 
             for zombie in zombies[:]:
                 for bullet in bullets[:]:
@@ -210,6 +285,7 @@ def main():
                         bullets.remove(bullet)
                         zombies.remove(zombie)
                         score += 10
+                        play_hit_sound()
                         break
 
             player_rect = pygame.Rect(player.x, player.y, player.width, player.height)
@@ -218,8 +294,10 @@ def main():
                 if player_rect.colliderect(zombie_rect):
                     zombies.remove(zombie)
                     lives -= 1
+                    play_life_loss_sound()
                     if lives <= 0:
                         game_over = True
+                        play_game_over_sound()
 
             if spawn_cooldown <= 0:
                 zombies.append(Zombie())
