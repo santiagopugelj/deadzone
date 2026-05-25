@@ -103,6 +103,34 @@ def draw_ui(surface, score, lives):
     surface.blit(intro, (WIDTH // 2 - intro.get_width() // 2, 22))
 
 
+def get_start_button_rect():
+    return pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 20, 200, 60)
+
+
+def draw_start_menu(surface):
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 200))
+    surface.blit(overlay, (0, 0))
+
+    title = FONT_LARGE.render("Deadzone", True, GREEN)
+    subtitle = FONT_SMALL.render("Defend your base from the incoming zombies.", True, WHITE)
+    button_rect = get_start_button_rect()
+    mouse_pos = pygame.mouse.get_pos()
+    button_color = GREEN if button_rect.collidepoint(mouse_pos) else (88, 198, 98)
+
+    pygame.draw.rect(surface, button_color, button_rect, border_radius=18)
+    button_text = FONT_MEDIUM.render("Start", True, DARK_GRAY)
+    surface.blit(
+        button_text,
+        (
+            button_rect.centerx - button_text.get_width() // 2,
+            button_rect.centery - button_text.get_height() // 2,
+        ),
+    )
+    surface.blit(title, (WIDTH // 2 - title.get_width() // 2, HEIGHT // 2 - 90))
+    surface.blit(subtitle, (WIDTH // 2 - subtitle.get_width() // 2, HEIGHT // 2 - 30))
+
+
 def draw_game_over(surface, score):
     overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 180))
@@ -115,7 +143,7 @@ def draw_game_over(surface, score):
     surface.blit(restart_text, (WIDTH // 2 - restart_text.get_width() // 2, HEIGHT // 2 + 28))
 
 
-def main():
+def reset_game():
     player = Player()
     bullets = []
     zombies = []
@@ -123,23 +151,37 @@ def main():
     lives = 3
     game_over = False
     spawn_cooldown = 0
+    game_started = False
+    return player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started
+
+
+def main():
+    player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started = reset_game()
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
                 if event.key == pygame.K_r and game_over:
-                    return main()
-                if event.key == pygame.K_SPACE and not game_over:
+                    player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started = reset_game()
+                    continue
+                if game_started and event.key == pygame.K_SPACE and not game_over:
                     bullets.append(Bullet(player.x + player.width // 2 - 4, player.y - 18))
+                if not game_started and event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                    game_started = True
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not game_started:
+                if get_start_button_rect().collidepoint(event.pos):
+                    game_started = True
 
         keys = pygame.key.get_pressed()
-        if not game_over:
+        if game_started and not game_over:
             dx = 0
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 dx -= 1
@@ -193,6 +235,9 @@ def main():
             zombie.draw(WINDOW)
 
         draw_ui(WINDOW, score, lives)
+
+        if not game_started:
+            draw_start_menu(WINDOW)
 
         if game_over:
             draw_game_over(WINDOW, score)

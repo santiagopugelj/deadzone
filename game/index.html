@@ -14,7 +14,16 @@
       <span id="score">Score: 0</span>
       <span id="lives">Lives: 3</span>
     </div>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="game-stage">
+      <div id="startMenu" class="start-menu">
+        <div class="start-menu__content">
+          <h2>Ready to survive?</h2>
+          <p>Defend your base from the incoming zombies.</p>
+          <button id="startButton" type="button">Start</button>
+        </div>
+      </div>
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
+    </div>
     <p class="footer">Press R to restart or Esc to quit after you lose.</p>
   </div>
   <script src="script.js"></script>

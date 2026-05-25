@@ -1,5 +1,8 @@
 # CHANGELOG - Dead Zone
 
+## v0.6 - 2026-05-24
+- Added a Start menu before gameplay
+
 ## v0.5 - 2026-05-23
 - Added README instructions for running the desktop (Python) version
 - Added upcoming_features.md at the project root

@@ -2,6 +2,8 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("score");
 const livesEl = document.getElementById("lives");
+const startMenu = document.getElementById("startMenu");
+const startButton = document.getElementById("startButton");
 
 const width = canvas.width;
 const height = canvas.height;
@@ -32,7 +34,14 @@ let gameState = {
   lives: 3,
   spawnCooldown: 0,
   gameOver: false,
+  started: false,
 };
+
+function startGame() {
+  gameState.started = true;
+  gameState.keys = {};
+  startMenu.classList.add("hidden");
+}
 
 function drawBackground() {
   ctx.fillStyle = COLORS.darkGray;
@@ -196,7 +205,7 @@ function updateSpawning() {
 }
 
 function update() {
-  if (gameState.gameOver) return;
+  if (!gameState.started || gameState.gameOver) return;
   
   updatePlayer();
   updateBullets();
@@ -245,15 +254,19 @@ function resetGame() {
     lives: 3,
     spawnCooldown: 0,
     gameOver: false,
+    started: true,
   };
+  startMenu.classList.add("hidden");
 }
+
+startButton.addEventListener("click", startGame);
 
 window.addEventListener("keydown", event => {
   gameState.keys[event.key] = true;
   
   if (event.key === " " || event.key === "Spacebar") {
     event.preventDefault();
-    if (!gameState.gameOver) {
+    if (gameState.started && !gameState.gameOver) {
       const p = gameState.player;
       gameState.bullets.push({
         x: p.x + p.width / 2 - 4,
