@@ -171,6 +171,8 @@ def draw_ui(surface, score, lives):
     pygame.draw.rect(surface, RED, (250, 60, 220, 22), border_radius=12)
     intro = FONT_SMALL.render("Use the left/right arrows or A/D to move and Space to shoot", True, LIGHT_GRAY)
     surface.blit(intro, (WIDTH // 2 - intro.get_width() // 2, 22))
+    pause_tip = FONT_SMALL.render("Press P to pause/resume", True, LIGHT_GRAY)
+    surface.blit(pause_tip, (WIDTH // 2 - pause_tip.get_width() // 2, 52))
 
 
 def get_start_button_rect():
@@ -213,6 +215,16 @@ def draw_game_over(surface, score):
     surface.blit(restart_text, (WIDTH // 2 - restart_text.get_width() // 2, HEIGHT // 2 + 28))
 
 
+def draw_pause_overlay(surface):
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 180))
+    surface.blit(overlay, (0, 0))
+    paused_text = FONT_LARGE.render("Paused", True, WHITE)
+    resume_text = FONT_SMALL.render("Press P to resume", True, LIGHT_GRAY)
+    surface.blit(paused_text, (WIDTH // 2 - paused_text.get_width() // 2, HEIGHT // 2 - 80))
+    surface.blit(resume_text, (WIDTH // 2 - resume_text.get_width() // 2, HEIGHT // 2 - 20))
+
+
 def reset_game():
     player = Player()
     bullets = []
@@ -222,11 +234,12 @@ def reset_game():
     game_over = False
     spawn_cooldown = 0
     game_started = False
-    return player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started
+    game_paused = False
+    return player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started, game_paused
 
 
 def main():
-    player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started = reset_game()
+    player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started, game_paused = reset_game()
 
     while True:
         for event in pygame.event.get():
@@ -239,9 +252,11 @@ def main():
                     pygame.quit()
                     sys.exit()
                 if event.key == pygame.K_r and game_over:
-                    player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started = reset_game()
+                    player, bullets, zombies, score, lives, game_over, spawn_cooldown, game_started, game_paused = reset_game()
                     continue
-                if game_started and event.key == pygame.K_SPACE and not game_over:
+                if game_started and not game_over and event.key == pygame.K_p:
+                    game_paused = not game_paused
+                if game_started and event.key == pygame.K_SPACE and not game_over and not game_paused:
                     bullets.append(Bullet(player.x + player.width // 2 - 4, player.y - 18))
                     play_shoot_sound()
                 if not game_started and event.key in (pygame.K_RETURN, pygame.K_SPACE):
@@ -254,7 +269,7 @@ def main():
                     play_start_sound()
 
         keys = pygame.key.get_pressed()
-        if game_started and not game_over:
+        if game_started and not game_over and not game_paused:
             dx = 0
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 dx -= 1
@@ -313,6 +328,9 @@ def main():
             zombie.draw(WINDOW)
 
         draw_ui(WINDOW, score, lives)
+
+        if game_paused and game_started and not game_over:
+            draw_pause_overlay(WINDOW)
 
         if not game_started:
             draw_start_menu(WINDOW)

@@ -1,5 +1,8 @@
 # CHANGELOG - Dead Zone
 
+## v0.8 - 2026-05-30
+- Added pause/resume support across the project with a pause button and keyboard shortcut (P)
+
 ## v0.7 - 2026-05-25
 - Added sound effects
 

@@ -87,6 +87,35 @@ p code {
   border: 1px solid rgba(90, 199, 84, 0.3);
 }
 
+.game-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.game-controls button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0b0b0f;
+  background: linear-gradient(135deg, var(--accent-green), #9be57e);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 10px 24px rgba(90, 199, 84, 0.25);
+}
+
+.game-controls button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(90, 199, 84, 0.35);
+}
+
+.game-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .game-stage {
   position: relative;
   margin: 20px 0;

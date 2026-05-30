@@ -4,6 +4,7 @@ const scoreEl = document.getElementById("score");
 const livesEl = document.getElementById("lives");
 const startMenu = document.getElementById("startMenu");
 const startButton = document.getElementById("startButton");
+const pauseButton = document.getElementById("pauseButton");
 
 const width = canvas.width;
 const height = canvas.height;
@@ -105,14 +106,32 @@ let gameState = {
   spawnCooldown: 0,
   gameOver: false,
   started: false,
+  paused: false,
 };
 
 function startGame() {
   ensureAudioContext();
   playStartSound();
   gameState.started = true;
+  gameState.paused = false;
   gameState.keys = {};
+  pauseButton.disabled = false;
+  pauseButton.textContent = "Pause";
   startMenu.classList.add("hidden");
+}
+
+function drawPauseOverlay() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = COLORS.white;
+  ctx.font = "bold 48px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("Paused", width / 2, height / 2 - 20);
+
+  ctx.font = "24px Arial";
+  ctx.fillText("Press P to resume", width / 2, height / 2 + 30);
+  ctx.textAlign = "left";
 }
 
 function drawBackground() {
@@ -280,7 +299,7 @@ function updateSpawning() {
 }
 
 function update() {
-  if (!gameState.started || gameState.gameOver) return;
+  if (!gameState.started || gameState.gameOver || gameState.paused) return;
 
   updatePlayer();
   updateBullets();
@@ -300,6 +319,10 @@ function draw() {
   drawPlayer();
   drawUI();
   
+  if (gameState.paused) {
+    drawPauseOverlay();
+  }
+
   if (gameState.gameOver) {
     drawGameOver();
   }
@@ -331,11 +354,22 @@ function resetGame() {
     spawnCooldown: 0,
     gameOver: false,
     started: true,
+    paused: false,
   };
+  pauseButton.disabled = false;
+  pauseButton.textContent = "Pause";
   startMenu.classList.add("hidden");
 }
 
+function togglePause() {
+  if (!gameState.started || gameState.gameOver) return;
+
+  gameState.paused = !gameState.paused;
+  pauseButton.textContent = gameState.paused ? "Resume" : "Pause";
+}
+
 startButton.addEventListener("click", startGame);
+pauseButton.addEventListener("click", togglePause);
 
 window.addEventListener("keydown", event => {
   ensureAudioContext();
@@ -359,6 +393,12 @@ window.addEventListener("keydown", event => {
   if (event.key === "r" || event.key === "R") {
     if (gameState.gameOver) {
       resetGame();
+    }
+  }
+
+  if (event.key === "p" || event.key === "P") {
+    if (gameState.started && !gameState.gameOver) {
+      togglePause();
     }
   }
 
