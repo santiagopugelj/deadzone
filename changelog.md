@@ -1,5 +1,11 @@
 # CHANGELOG - Dead Zone
 
+## v0.9 - 2026-06-04
+- Removed the desktop Python version to focus the project on the web-based game only
+- Updated README to point to the browser version
+- Added Enter key support to start the game from the web start menu
+- Updated start screen text to mention Enter and mouse click controls
+
 ## v0.8 - 2026-05-30
 - Added pause/resume support across the project with a pause button and keyboard shortcut (P)
 

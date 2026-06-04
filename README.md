@@ -1,5 +1,1 @@
-Run desktop (python) version:
-
-python game\main.py
-
-This starts the desktop (Python) version of the game.
+Open `game/index.html` in a browser to run the web version of the game.

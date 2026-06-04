@@ -375,6 +375,12 @@ window.addEventListener("keydown", event => {
   ensureAudioContext();
   gameState.keys[event.key] = true;
 
+  if (!gameState.started && !gameState.gameOver && event.key === "Enter") {
+    event.preventDefault();
+    startGame();
+    return;
+  }
+
   if (event.key === " " || event.key === "Spacebar") {
     event.preventDefault();
     if (gameState.started && !gameState.gameOver) {
