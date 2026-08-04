@@ -191,13 +191,6 @@ function drawZombies() {
   });
 }
 
-function drawUI() {
-  ctx.fillStyle = COLORS.white;
-  ctx.font = "32px Arial";
-  ctx.fillText(`Score: ${gameState.score}`, 20, 50);
-  ctx.fillText(`Lives: ${gameState.lives}`, width - 200, 50);
-}
-
 function drawGameOver() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.fillRect(0, 0, width, height);
@@ -317,7 +310,6 @@ function draw() {
   drawBullets();
   drawZombies();
   drawPlayer();
-  drawUI();
   
   if (gameState.paused) {
     drawPauseOverlay();

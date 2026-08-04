@@ -8,27 +8,29 @@
 </head>
 <body>
   <div class="container">
-    <h1>Deadzone</h1>
-    <p>Use the left/right arrows or <code>A</code>/<code>D</code> to move and <code>Space</code> to shoot.</p>
-    <div class="hud">
-      <span id="score">Score: 0</span>
-      <span id="lives">Lives: 3</span>
-    </div>
-    <div class="game-controls">
-      <button id="pauseButton" type="button" disabled>Pause</button>
-    </div>
-    <div class="game-stage">
-      <div id="startMenu" class="start-menu">
-        <div class="start-menu__content">
-          <h2>Ready to survive?</h2>
-          <p>Defend your base from the incoming zombies.</p>
-          <p>Press Enter or click Start to begin.</p>
-          <button id="startButton" type="button">Start</button>
+    <div class="game-layout">
+      <div class="game-stage">
+        <div id="startMenu" class="start-menu">
+          <div class="start-menu__content">
+            <h2>Ready to survive?</h2>
+            <p>Defend your base from the incoming zombies.</p>
+            <p>Use left/right arrows or <code>A</code>/<code>D</code> to move and <code>Space</code> to shoot.</p>
+            <p>Press Enter or click Start to begin.</p>
+            <button id="startButton" type="button">Start</button>
+          </div>
         </div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
       </div>
-      <canvas id="gameCanvas" width="800" height="600"></canvas>
+      <aside class="side-panel">
+        <div class="hud">
+          <span id="score">Score: 0</span>
+          <span id="lives">Lives: 3</span>
+        </div>
+        <div class="game-controls">
+          <button id="pauseButton" type="button" disabled>Pause</button>
+        </div>
+      </aside>
     </div>
-    <p class="footer">Press R to restart or Esc to quit after you lose.</p>
   </div>
   <script src="script.js"></script>
 </body>

@@ -15,45 +15,76 @@
   padding: 0;
 }
 
+html,
 body {
   min-height: 100vh;
+  height: 100%;
+}
+
+body {
   background: linear-gradient(135deg, #1a1a1f 0%, #0f0f13 100%);
   color: var(--text-main);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: 0.65rem;
 }
 
 .container {
-  width: 100%;
-  max-width: 800px;
-  text-align: center;
+  width: min(1000px, calc(100vw - 1.3rem));
+  max-height: calc(100vh - 1.3rem);
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 20px;
-  padding: 32px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.game-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 100%;
+  min-height: 300px;
+}
+
+.game-stage {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.side-panel {
+  width: min(220px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
 }
 
 h1 {
-  margin-bottom: 12px;
-  font-size: 2.8rem;
+  margin-bottom: 10px;
+  font-size: clamp(2rem, 4vw, 2.4rem);
   background: linear-gradient(135deg, var(--text-main), var(--text-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-weight: 700;
-  letter-spacing: -1px;
+  letter-spacing: -0.8px;
 }
 
 p {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 p code {
@@ -67,20 +98,20 @@ p code {
 
 .hud {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 24px 0;
-  padding: 16px 20px;
-  border-radius: 14px;
-  background: rgba(20, 20, 25, 0.6);
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 14px 14px;
+  border-radius: 18px;
+  background: rgba(20, 20, 25, 0.82);
   border: 1px solid var(--border-color);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .hud span {
   flex: 1;
-  padding: 8px 12px;
+  padding: 8px 10px;
   background: rgba(90, 199, 84, 0.1);
   border-radius: 10px;
   color: var(--accent-green);
@@ -90,13 +121,14 @@ p code {
 .game-controls {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
+  margin: 0;
 }
 
 .game-controls button {
+  width: 100%;
   border: 0;
   border-radius: 999px;
-  padding: 0.85rem 1.4rem;
+  padding: 0.85rem 1rem;
   font-size: 0.95rem;
   font-weight: 700;
   color: #0b0b0f;
@@ -118,7 +150,7 @@ p code {
 
 .game-stage {
   position: relative;
-  margin: 20px 0;
+  margin: 16px 0;
 }
 
 .start-menu {
@@ -127,7 +159,7 @@ p code {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1.4rem;
   background: rgba(10, 10, 14, 0.9);
   border: 2px solid var(--border-color);
   border-radius: 14px;
@@ -174,8 +206,10 @@ p code {
 
 canvas {
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   height: auto;
+  max-height: calc(100vh - 4.5rem);
+  aspect-ratio: 4 / 3;
   border: 2px solid var(--border-color);
   border-radius: 14px;
   background: var(--bg-dark);
@@ -186,26 +220,32 @@ canvas {
 }
 
 .footer {
-  margin-top: 20px;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  opacity: 0.8;
+  display: none;
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 20px;
+    padding: 14px;
   }
 
-  h1 {
-    font-size: 2rem;
-  }
-
-  .hud {
+  .game-layout {
     flex-direction: column;
   }
 
+  .side-panel {
+    width: 100%;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  .hud {
+    font-size: 0.92rem;
+  }
+
   canvas {
+    max-height: calc(100vh - 12rem);
     border-radius: 10px;
   }
 }

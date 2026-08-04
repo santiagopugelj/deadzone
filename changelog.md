@@ -1,5 +1,11 @@
 # CHANGELOG - Dead Zone
 
+## v1.0 - 2026-08-04
+- Redesigned the game layout to fit entirely within the browser viewport without scrolling
+- Simplified the gameplay UI by removing non-essential on-screen elements
+- Moved the HUD (Score, Lives, Pause) to a compact side panel
+- Centered and enlarged the game canvas for a better gameplay experience
+
 ## v0.9 - 2026-06-04
 - Removed the desktop Python version to focus the project on the web-based game only
 - Updated README to point to the browser version
