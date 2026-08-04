@@ -2,10 +2,12 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("score");
 const livesEl = document.getElementById("lives");
+const highScoreEl = document.getElementById("highScore");
 const startMenu = document.getElementById("startMenu");
 const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseButton");
 
+const HIGH_SCORE_KEY = "deadzoneHighScore";
 const width = canvas.width;
 const height = canvas.height;
 
@@ -89,6 +91,35 @@ function playGameOverSound() {
     playTone({ frequency: 140, duration: 0.4, type: "sawtooth", volume: 0.05, filterFreq: 500 });
   }, 120);
 }
+
+function loadHighScore() {
+  try {
+    const stored = localStorage.getItem(HIGH_SCORE_KEY);
+    const value = stored !== null ? Number(stored) : 0;
+    return Number.isFinite(value) ? value : 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+function saveHighScore(value) {
+  try {
+    localStorage.setItem(HIGH_SCORE_KEY, String(value));
+  } catch (error) {
+    // localStorage may be unavailable in some environments
+  }
+}
+
+function updateHighScore(score) {
+  if (score > highScore) {
+    highScore = score;
+    highScoreEl.textContent = `High Score: ${highScore}`;
+    saveHighScore(highScore);
+  }
+}
+
+let highScore = loadHighScore();
+highScoreEl.textContent = `High Score: ${highScore}`;
 
 let gameState = {
   player: {
@@ -251,6 +282,7 @@ function updateZombies() {
         gameState.bullets.splice(bIdx, 1);
         gameState.zombies.splice(zIdx, 1);
         gameState.score += 10;
+        updateHighScore(gameState.score);
         playHitSound();
       }
     });
