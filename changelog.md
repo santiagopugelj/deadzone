@@ -1,5 +1,13 @@
 # CHANGELOG - Dead Zone
 
+## v1.2 - 2026-08-12
+
+- Added the "DEADZONE" title to the gameplay HUD
+
+## v1.1 - 2026-08-04
+- Added a persistent High Score system using localStorage
+- Displayed the High Score in the gameplay HUD
+
 ## v1.0 - 2026-08-04
 - Redesigned the game layout to fit entirely within the browser viewport without scrolling
 - Simplified the gameplay UI by removing non-essential on-screen elements
